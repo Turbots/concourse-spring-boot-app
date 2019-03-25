@@ -10,4 +10,14 @@ public class ConcoursePipelineDemoApplication {
 		SpringApplication.run(ConcoursePipelineDemoApplication.class, args);
 	}
 
+	@Bean
+	public Moo lala() {
+		System.out.println("MOO");
+
+		return new Moo();
+	}
+
+	private static class Moo {
+		
+	}
 }
