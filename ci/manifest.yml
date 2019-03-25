@@ -2,4 +2,4 @@
 applications:
   - name: concourse-spring-boot
     buildpacks:
-      - java_buildpack
+      - https://github.com/cloudfoundry/java-buildpack.git

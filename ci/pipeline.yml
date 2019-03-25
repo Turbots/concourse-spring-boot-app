@@ -24,7 +24,6 @@ jobs:
         file: demo-src/ci/build.yml
       - put: cf-experimental
         params:
-          path: build/demo-app.jar
           manifest: build/manifest.yml
 
 groups:
