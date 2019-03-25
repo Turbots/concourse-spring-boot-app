@@ -31,6 +31,8 @@ jobs:
       - put: gh-release
         params:
           name: demo-src/ci/github_release_name
+          tag: demo-src/ci/github_release_tag
+          body: demo-src/ci/github_release_body
           globs:
             - build/*.jar
   - name: deploy
