@@ -5,5 +5,8 @@ image_resource:
   type: docker-image
   source: { repository: appropriate/curl, tag: latest }
 
+inputs:
+  - name: demo-src
+
 run:
   path: demo-src/ci/integration-test.sh

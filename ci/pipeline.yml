@@ -38,13 +38,19 @@ jobs:
   - name: integration-test
     build_logs_to_retain: 5
     plan:
-      - get: demo-src
-      - task: build
+      - aggregate:
+        - get: demo-src
+          passed: [build-and-deploy-dev]
+          trigger: true
+        - get: dev
+      - task: integration-test
         file: demo-src/ci/integration-test.yml
   - name: deploy-to-prod
     build_logs_to_retain: 30
     plan:
       - get: dev
+        passed: [integration-test]
+        trigger: true
       - put: prod
 
 groups:
