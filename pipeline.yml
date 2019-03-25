@@ -1,0 +1,22 @@
+---
+resources:
+  - name: demo-src
+    type: git
+    source:
+      uri: https://github.com/Turbots/concourse-spring-boot-app.git
+      branch: master
+
+jobs:
+  - name: build-demo-app
+    build_logs_to_retain: 30
+    plan:
+      - aggregate:
+        - get: demo-src
+          trigger: true
+      - task: build
+        file: demo-src/build.yml
+
+groups:
+  - name: demo-app
+    jobs:
+      - build-demo-app
