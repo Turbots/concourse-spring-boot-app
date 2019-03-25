@@ -14,12 +14,6 @@ resources:
       organization: OrdinaBelgiumNV
       space: experimental
       skip_cert_check: false
-  - name: gh-release
-    type: github-release
-    source:
-      owner: Turbots
-      repository: concourse-spring-boot-app
-      access_token: ((GITHUB_ACCESS_TOKEN))
 jobs:
   - name: build
     build_logs_to_retain: 30
@@ -28,24 +22,11 @@ jobs:
         trigger: true
       - task: build
         file: demo-src/ci/build.yml
-      - put: gh-release
-        params:
-          name: demo-src/ci/github_release_name
-          tag: demo-src/ci/github_release_tag
-          body: demo-src/ci/github_release_body
-          globs:
-            - build/*.jar
-  - name: deploy
-    serial: true
-    plan:
-      - get: gh-release
-        passed:
-          - build
-        trigger: true
       - put: cf-experimental
+        params:
+          manifest: build/manifest.yml
 
 groups:
   - name: demo-app
     jobs:
       - build
-      - deploy
