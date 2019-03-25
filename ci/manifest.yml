@@ -1,3 +1,5 @@
 ---
 applications:
   - name: concourse-spring-boot
+    buildpacks:
+      - java_buildpack
