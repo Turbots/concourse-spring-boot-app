@@ -5,29 +5,51 @@ resources:
     source:
       uri: https://github.com/Turbots/concourse-spring-boot-app.git
       branch: master
-  - name: cf-experimental
+  - name: dev
     type: cf
     source:
       api: https://api.run.pivotal.io
       username: dieter.hubau@ordina.be
       password: ((CF_PASSWORD))
       organization: OrdinaBelgiumNV
-      space: experimental
+      space: development
+      skip_cert_check: false
+  - name: prod
+    type: cf
+    source:
+      api: https://api.run.pivotal.io
+      username: dieter.hubau@ordina.be
+      password: ((CF_PASSWORD))
+      organization: OrdinaBelgiumNV
+      space: production
       skip_cert_check: false
 jobs:
-  - name: build
+  - name: build-and-deploy-dev
     build_logs_to_retain: 30
     plan:
       - get: demo-src
         trigger: true
       - task: build
         file: demo-src/ci/build.yml
-      - put: cf-experimental
+      - put: dev
         params:
           path: build/
           manifest: build/manifest.yml
+  - name: integration-test
+    build_logs_to_retain: 5
+    plan:
+      - get: demo-src
+      - task: build
+        file: demo-src/ci/integration-test.yml
+  - name: deploy-to-prod
+    build_logs_to_retain: 30
+    plan:
+      - get: dev
+      - put: prod
 
 groups:
   - name: demo-app
     jobs:
-      - build
+      - build-and-deploy-dev
+      - integration-test
+      - deploy-to-prod
