@@ -1,0 +1,49 @@
+---
+resources:
+  - name: demo-src
+    type: git
+    source:
+      uri: https://github.com/Turbots/concourse-spring-boot-app.git
+      branch: master
+  - name: cf-experimental
+    type: cf
+    source:
+      api: https://api.run.pivotal.io
+      username: dieter.hubau@ordina.be
+      password: ((CF_PASSWORD))
+      organization: OrdinaBelgiumNV
+      space: experimental
+      skip_cert_check: false
+  - name: gh-release
+    type: github-release
+    source:
+      owner: Turbots
+      repository: concourse-spring-boot-app
+      access_token: ((GITHUB_ACCESS_TOKEN))
+jobs:
+  - name: build
+    build_logs_to_retain: 30
+    plan:
+      - get: demo-src
+        trigger: true
+      - task: build
+        file: demo-src/ci/build.yml
+      - put: gh-release
+        params:
+          name: demo-src/ci/github_release_name
+          globs:
+            - build/*.jar
+  - name: deploy
+    serial: true
+    plan:
+      - get: gh-release
+        passed:
+          - build
+        trigger: true
+      - put: cf-experimental
+
+groups:
+  - name: demo-app
+    jobs:
+      - build
+      - deploy

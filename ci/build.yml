@@ -15,4 +15,4 @@ caches:
   - path: demo-src/.m2
 
 run:
-  path: demo-src/build.sh
+  path: demo-src/ci/build.sh
