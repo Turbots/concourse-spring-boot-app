@@ -2,6 +2,7 @@ package be.turbots.concourse.pipelinedemo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class ConcoursePipelineDemoApplication {
@@ -18,6 +19,6 @@ public class ConcoursePipelineDemoApplication {
 	}
 
 	private static class Moo {
-		
+
 	}
 }
