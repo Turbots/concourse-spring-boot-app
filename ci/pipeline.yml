@@ -1,10 +1,23 @@
 ---
+resource_types:
+  - name: maven-resource
+    type: docker-image
+    source:
+      repository: nulldriver/maven-resource
+      tag: latest
 resources:
   - name: demo-src
     type: git
     source:
       uri: https://github.com/Turbots/concourse-spring-boot-app.git
       branch: master
+  - name: artifact
+    type: maven-resource
+    source:
+      url: http://localhost:8081/repository/maven-releases/
+      snapshot_url: http://localhost:8081/repository/maven-snapshots/
+      username: ((NEXUS_USER))
+      password: ((NEXUS_PASSWORD))
   - name: dev
     type: cf
     source:
@@ -24,25 +37,34 @@ resources:
       space: production
       skip_cert_check: false
 jobs:
-  - name: build-and-deploy-dev
+  - name: build
     build_logs_to_retain: 30
     plan:
       - get: demo-src
         trigger: true
       - task: build
         file: demo-src/ci/build.yml
+      - put: artifact
+        params:
+          file: build/demo-app.jar
+          pom_file: demo-src/pom.xml
+  - name: deploy-to-dev
+    build_logs_to_retain: 30
+    plan:
+      - aggregate:
+        - get: demo-src
+          passed: [build]
+        - get: artifact
       - put: dev
         params:
-          path: build/
-          manifest: build/manifest.yml
+          path: artifact/demo-app.jar
+          manifest: demo-src/ci/manifest.yml 
   - name: integration-test
     build_logs_to_retain: 5
     plan:
       - aggregate:
         - get: demo-src
-          passed: [build-and-deploy-dev]
-          trigger: true
-        - get: dev
+          passed: [deploy-to-dev]
       - task: integration-test
         file: demo-src/ci/integration-test.yml
   - name: deploy-to-prod
@@ -61,6 +83,7 @@ jobs:
 groups:
   - name: demo-app
     jobs:
-      - build-and-deploy-dev
+      - build
+      - deploy-to-dev
       - integration-test
       - deploy-to-prod
