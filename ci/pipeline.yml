@@ -48,10 +48,15 @@ jobs:
   - name: deploy-to-prod
     build_logs_to_retain: 30
     plan:
-      - get: dev
-        passed: [integration-test]
-        trigger: true
+      - aggregate:
+        - get: demo-src
+          passed: [integration-test]
+          trigger: true
+        - get: dev
       - put: prod
+        params:
+          path: build/
+          manifest: build/manifest.yml
 
 groups:
   - name: demo-app

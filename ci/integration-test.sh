@@ -1,3 +1,3 @@
 #!/bin/sh
 
-curl https://concourse-spring-boot.cfapps.io/?user=moo
+curl -v https://concourse-spring-boot.cfapps.io/?user=moo
