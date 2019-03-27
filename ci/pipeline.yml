@@ -15,7 +15,7 @@ resources:
     type: maven-resource
     source:
       url: http://nexus:8081/repository/maven-releases/
-      artifact: "be.turbots:concourse-pipeline-demo"
+      artifact: be.turbots:concourse-pipeline-demo:jar
       username: ((NEXUS_USER))
       password: ((NEXUS_PASSWORD))
   - name: cf-dev
