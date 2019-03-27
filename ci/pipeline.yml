@@ -14,11 +14,11 @@ resources:
   - name: artifact
     type: maven-resource
     source:
-      url: http://localhost:8081/repository/maven-releases/
-      snapshot_url: http://localhost:8081/repository/maven-snapshots/
+      url: http://nexus:8081/repository/maven-releases/
+      artifact: "be.turbots:concourse-pipeline-demo"
       username: ((NEXUS_USER))
       password: ((NEXUS_PASSWORD))
-  - name: dev
+  - name: cf-dev
     type: cf
     source:
       api: https://api.run.pivotal.io
@@ -27,7 +27,7 @@ resources:
       organization: OrdinaBelgiumNV
       space: development
       skip_cert_check: false
-  - name: prod
+  - name: cf-prod
     type: cf
     source:
       api: https://api.run.pivotal.io
@@ -51,14 +51,14 @@ jobs:
   - name: deploy-to-dev
     build_logs_to_retain: 30
     plan:
-      - aggregate:
-        - get: demo-src
-          passed: [build]
-        - get: artifact
-      - put: dev
+      - get: demo-src
+        passed: [build]
+      - get: artifact
+        trigger: true
+      - put: cf-dev
         params:
+          manifest: demo-src/ci/manifest.yml
           path: artifact/demo-app.jar
-          manifest: demo-src/ci/manifest.yml 
   - name: integration-test
     build_logs_to_retain: 5
     plan:
@@ -70,15 +70,14 @@ jobs:
   - name: deploy-to-prod
     build_logs_to_retain: 30
     plan:
-      - aggregate:
-        - get: demo-src
-          passed: [integration-test]
-          trigger: true
-        - get: dev
-      - put: prod
+      - get: demo-src
+        passed: [integration-test]
+      - get: artifact
+        trigger: true
+      - put: cf-prod
         params:
-          path: build/
-          manifest: build/manifest.yml
+          manifest: demo-src/ci/manifest.yml
+          path: artifact/demo-app.jar
 
 groups:
   - name: demo-app
