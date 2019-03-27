@@ -47,7 +47,7 @@ jobs:
         file: demo-src/ci/build.yml
       - put: artifact
         params:
-          file: build/demo-app.jar
+          file: build/*.jar
           pom_file: demo-src/pom.xml
   - name: deploy-to-dev
     build_logs_to_retain: 30
