@@ -59,7 +59,7 @@ jobs:
       - put: cf-dev
         params:
           manifest: demo-src/ci/manifest.yml
-          path: artifact/demo-app.jar
+          path: artifact/concourse-pipeline-demo-*.jar
   - name: integration-test
     build_logs_to_retain: 5
     plan:

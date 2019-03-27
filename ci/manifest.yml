@@ -1,6 +1,5 @@
 ---
 applications:
   - name: concourse-spring-boot
-    path: demo-app.jar
     buildpacks:
       - https://github.com/cloudfoundry/java-buildpack.git
