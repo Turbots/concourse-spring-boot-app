@@ -58,7 +58,7 @@ jobs:
         trigger: true
       - put: cf-dev
         params:
-          manifest: demo-src/ci/manifest.yml
+          manifest: demo-src/ci/manifest-dev.yml
           path: artifact/concourse-pipeline-demo-*.jar
   - name: integration-test
     build_logs_to_retain: 5
@@ -66,6 +66,7 @@ jobs:
       - aggregate:
         - get: demo-src
           passed: [deploy-to-dev]
+          trigger: true
       - task: integration-test
         file: demo-src/ci/integration-test.yml
   - name: deploy-to-prod
@@ -77,8 +78,8 @@ jobs:
         trigger: true
       - put: cf-prod
         params:
-          manifest: demo-src/ci/manifest.yml
-          path: artifact/demo-app.jar
+          manifest: demo-src/ci/manifest-prod.yml
+          path: artifact/concourse-pipeline-demo-*.jar
 
 groups:
   - name: demo-app

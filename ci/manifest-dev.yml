@@ -1,0 +1,7 @@
+---
+applications:
+  - name: concourse-spring-boot
+    buildpacks:
+      - https://github.com/cloudfoundry/java-buildpack.git
+    routes:
+      - route: concourse-spring-boot-dev.cfapps.io
