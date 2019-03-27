@@ -54,8 +54,8 @@ jobs:
     plan:
       - get: demo-src
         passed: [build]
-      - get: artifact
         trigger: true
+      - get: artifact
       - put: cf-dev
         params:
           manifest: demo-src/ci/manifest-dev.yml
@@ -74,8 +74,8 @@ jobs:
     plan:
       - get: demo-src
         passed: [integration-test]
-      - get: artifact
         trigger: true
+      - get: artifact
       - put: cf-prod
         params:
           manifest: demo-src/ci/manifest-prod.yml
