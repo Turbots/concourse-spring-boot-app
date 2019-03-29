@@ -6,7 +6,7 @@ resource_types:
       repository: nulldriver/maven-resource
       tag: latest
 resources:
-  - name: demo-src
+  - name: source
     type: git
     source:
       uri: https://github.com/Turbots/concourse-spring-boot-app.git
@@ -41,44 +41,43 @@ jobs:
   - name: build
     build_logs_to_retain: 30
     plan:
-      - get: demo-src
+      - get: source
         trigger: true
       - task: build
-        file: demo-src/ci/build.yml
+        file: source/ci/build.yml
       - put: artifact
         params:
           file: build/*.jar
-          pom_file: demo-src/pom.xml
+          pom_file: source/pom.xml
   - name: deploy-to-dev
     build_logs_to_retain: 30
     plan:
-      - get: demo-src
+      - get: source
         passed: [build]
         trigger: true
       - get: artifact
       - put: cf-dev
         params:
-          manifest: demo-src/ci/manifest-dev.yml
+          manifest: source/ci/manifest-dev.yml
           path: artifact/concourse-pipeline-demo-*.jar
   - name: integration-test
     build_logs_to_retain: 5
     plan:
-      - aggregate:
-        - get: demo-src
-          passed: [deploy-to-dev]
-          trigger: true
+      - get: source
+        passed: [deploy-to-dev]
+        trigger: true
       - task: integration-test
-        file: demo-src/ci/integration-test.yml
+        file: source/ci/integration-test.yml
   - name: deploy-to-prod
     build_logs_to_retain: 30
     plan:
-      - get: demo-src
+      - get: source
         passed: [integration-test]
         trigger: true
       - get: artifact
       - put: cf-prod
         params:
-          manifest: demo-src/ci/manifest-prod.yml
+          manifest: source/ci/manifest-prod.yml
           path: artifact/concourse-pipeline-demo-*.jar
 
 groups:

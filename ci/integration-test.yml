@@ -6,7 +6,7 @@ image_resource:
   source: { repository: appropriate/curl, tag: latest }
 
 inputs:
-  - name: demo-src
+  - name: source
 
 run:
-  path: demo-src/ci/integration-test.sh
+  path: source/ci/integration-test.sh
