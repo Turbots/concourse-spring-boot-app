@@ -53,25 +53,27 @@ jobs:
     build_logs_to_retain: 30
     plan:
       - get: source
+      - get: artifact
         passed: [build]
         trigger: true
-      - get: artifact
       - put: cf-dev
         params:
           manifest: source/ci/manifest-dev.yml
           path: artifact/concourse-pipeline-demo-*.jar
   - name: integration-test
-    build_logs_to_retain: 5
+    build_logs_to_retain: 30
     plan:
-      - get: source
+      - get: cf-dev
         passed: [deploy-to-dev]
         trigger: true
+      - get: source
       - task: integration-test
         file: source/ci/integration-test.yml
   - name: deploy-to-prod
     build_logs_to_retain: 30
     plan:
       - get: source
+      - get: cf-dev
         passed: [integration-test]
         trigger: true
       - get: artifact
