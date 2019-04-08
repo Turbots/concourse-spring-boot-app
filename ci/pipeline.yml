@@ -83,7 +83,7 @@ jobs:
           path: artifact/concourse-pipeline-demo-*.jar
 
 groups:
-  - name: demo-app
+  - name: concourse-spring-boot-app
     jobs:
       - build
       - deploy-to-dev
